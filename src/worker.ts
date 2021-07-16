@@ -6,13 +6,13 @@ export default interface IntervalWork {
 
 export interface ScheduledIntervalWork {
   id: string;
-  intervalId: number;
+  intervalId: NodeJS.Timer;
 }
 
 const scheduledIntervalWorks: ScheduledIntervalWork[] = [];
 
 onmessage = (event) => {
-  const intervalWork = event.data && event.data as IntervalWork;
+  const intervalWork = event.data && (event.data as IntervalWork);
   if (!intervalWork) {
     return;
   }
@@ -20,7 +20,9 @@ onmessage = (event) => {
   switch (intervalWork.name) {
     case "setInterval": {
       intervalWork.name = "runCallback";
-      const intervalId = setInterval(() => { postMessage(intervalWork); }, intervalWork.delay);
+      const intervalId = setInterval(() => {
+        postMessage(intervalWork);
+      }, intervalWork.delay);
       scheduledIntervalWorks.push({
         id: intervalWork.id,
         intervalId,
@@ -28,7 +30,9 @@ onmessage = (event) => {
       break;
     }
     case "clearInterval": {
-      const workIndex = scheduledIntervalWorks.findIndex(x => x.id === intervalWork.id);
+      const workIndex = scheduledIntervalWorks.findIndex(
+        (x) => x.id === intervalWork.id
+      );
       if (workIndex >= 0) {
         clearInterval(scheduledIntervalWorks[workIndex].intervalId);
         scheduledIntervalWorks.splice(workIndex);

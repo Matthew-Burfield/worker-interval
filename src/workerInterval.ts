@@ -1,4 +1,4 @@
-import * as createUniqueId from "uuid/v4";
+import { v4 as createUniqueId } from "uuid";
 import IntervalWork from "./worker";
 
 export interface Work {
@@ -36,7 +36,7 @@ export default class WorkerInterval {
   }
 
   public clearInterval(id: string): void {
-    const workIndex = this.works && this.works.findIndex(x => x.id === id);
+    const workIndex = this.works && this.works.findIndex((x) => x.id === id);
     if (workIndex === null || workIndex < 0) {
       return;
     }
@@ -51,14 +51,15 @@ export default class WorkerInterval {
   }
 
   private onMessage(event: MessageEvent): void {
-    const intervalWork = event.data && event.data as IntervalWork;
+    const intervalWork = event.data && (event.data as IntervalWork);
     if (!intervalWork) {
       return;
     }
 
     switch (intervalWork.name) {
       case "runCallback": {
-        const work = this.works && this.works.find(x => x.id === intervalWork.id);
+        const work =
+          this.works && this.works.find((x) => x.id === intervalWork.id);
         if (!work) {
           return;
         }
