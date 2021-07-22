@@ -11,7 +11,7 @@ export default class WorkerInterval {
   private readonly worker: Worker;
 
   constructor() {
-    const Worker = require("worker-loader!./worker");
+    const Worker = require("worker-loader!./worker").default;
     this.worker = new Worker();
     this.worker.onmessage = (data) => this.onMessage(data);
   }
